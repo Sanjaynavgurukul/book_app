@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BookListing extends StatefulWidget {
   const BookListing({Key? key}) : super(key: key);
@@ -44,8 +45,12 @@ class _BookListingState extends State<BookListing> {
   }
 
   void _scrollListener() async {
+    //Unfocus Editor :D
+    FocusScope.of(context).unfocus();
+
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       // User has scrolled to the bottom, load more data
+
       if (viewModel.isLoading) {
         return;
       }
@@ -110,6 +115,7 @@ class _BookListingState extends State<BookListing> {
                 color: Colors.white,
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
                 child: CupertinoSearchTextField(
+                  enabled: viewModel.bookModel != null,
                   controller: _controller,
                   onChanged: (String value) {
                     // Future.delayed(Duration(milliseconds: 400),((){
@@ -149,9 +155,7 @@ class _BookListingState extends State<BookListing> {
 
   Widget mainList() {
     if (viewModel.bookModel == null) {
-      return Container(
-        child: const Text("Loading..."),
-      );
+      return loader();
     }
 
     if (viewModel.bookModel!.results == null || viewModel.bookModel!.results!.isEmpty) {
@@ -181,121 +185,34 @@ class _BookListingState extends State<BookListing> {
       crossAxisCount: 3,
     );
   }
-}
 
-// class BookListing extends StatefulWidget {
-//   const BookListing({Key? key}) : super(key: key);
-//
-//   @override
-//   State<BookListing> createState() => _BookListingState();
-// }
-//
-// class _BookListingState extends State<BookListing> {
-//   //View Model
-//   late var viewModel = BookListingViewModel();
-//   bool dataCalled = false;
-//
-//   @override
-//   void didChangeDependencies() {
-//     viewModel = context.watch<BookListingViewModel>();
-//     super.didChangeDependencies();
-//   }
-//
-//   void getData({bool fromDirect = false}){
-//     if(dataCalled && !fromDirect){
-//       return;
-//     }
-//
-//     dataCalled = true;
-//     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-//       viewModel.getBookByCategory();
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Consumer<BookListingViewModel>(
-//       builder: (context, viewModel, child) {
-//         //check category Model
-//         if (viewModel.categoryModel == null) {
-//           return Material(
-//             color: AppColor.scaffoldBackground,
-//             child: const Center(
-//               child: Text(
-//                 'No Category Found',
-//                 style: TextStyle(color: AppColor.primaryColor),
-//               ),
-//             ),
-//           );
-//         }
-//
-//         //Get Data
-//         getData();
-//
-//         return Scaffold(
-//           floatingActionButton: FloatingActionButton(onPressed: (){
-//             viewModel.getBookByCategory();
-//           },child: Icon(Icons.add),),
-//           appBar: AppBar(
-//             elevation: 0,
-//             leading: IconButton(
-//               onPressed: () => Navigator.pop(context),
-//               icon: SvgPicture.asset('assets/image/back.svg'),
-//             ),
-//             title:  Text(
-//               viewModel.categoryModel!.cat_name,
-//               style: const TextStyle(
-//                 fontSize: 24,
-//                 color: AppColor.primaryColor,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ),
-//           body: Column(
-//             children: [
-//               Container(
-//                 color: Colors.white,
-//                 padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
-//                 child: Container(
-//                   height: 40,
-//                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: AppColor.lightGrey),
-//                 ),
-//               ),
-//               Expanded(
-//                 child: mainList(),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-//
-//   Widget mainList(){
-//     if(viewModel.bookModel == null){
-//       return Container(
-//         child: Text("Loading..."),
-//       );
-//     }
-//
-//     if(viewModel.bookModel!.results == null || viewModel.bookModel!.results!.isEmpty){
-//       return Container(
-//         child: Text("No Data Found"),
-//       );
-//     }
-//
-//     return AlignedGridView.count(
-//       shrinkWrap: true,
-//       mainAxisSpacing: 4,
-//       crossAxisSpacing: 4,
-//       addAutomaticKeepAlives: true,
-//       itemCount: viewModel.bookModel!.results!.length,
-//       itemBuilder: (context, index) {
-//         var item = viewModel.bookModel!.results![index];
-//         return  BookCard(item:item);
-//       },
-//       crossAxisCount: 3,
-//     );
-//   }
-//
-// }
+ Widget loader(){
+    return MasonryGridView.count(
+      shrinkWrap: true,
+
+      addAutomaticKeepAlives: true,
+      controller: _scrollController,
+      addRepaintBoundaries: false,
+      itemCount: 5,
+      itemBuilder: (context, index) {
+       return Container(
+         margin: const EdgeInsets.all(8),
+         child: Shimmer.fromColors(
+           baseColor: Colors.white,
+           highlightColor: Colors.grey.shade200,
+           direction: ShimmerDirection.ltr,
+           period: const Duration(seconds: 1),
+           child: Container(
+             height: 180,
+             decoration: BoxDecoration(
+               color:  Colors.white,
+               borderRadius: BorderRadius.circular(12),
+             ),
+           ),
+         ),
+       );
+      },
+      crossAxisCount: 3,
+    );
+ }
+}
