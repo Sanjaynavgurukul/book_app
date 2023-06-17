@@ -1,5 +1,8 @@
 import 'package:book_app/common_widget/custom_cached_image.dart';
+import 'package:book_app/helper/navigate_helper.dart';
 import 'package:book_app/model/book_model.dart';
+import 'package:book_app/screens/book_detail/book_detail.dart';
+import 'package:book_app/screens/book_detail/view_model/book_detail_view_model.dart';
 import 'package:book_app/theme/theme_config.dart';
 import 'package:flutter/material.dart';
 
@@ -11,20 +14,17 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (() {}),
+      onTap: (() {
+        NavigationHelper().navigatePush(context: context, viewModel: BookDetailViewModel.argument(book: item), screen: const BookDetail());
+      }),
       child: Container(
-        constraints: BoxConstraints(minHeight: 240),
+        constraints: const BoxConstraints(minHeight: 240),
         margin: const EdgeInsets.all(8),
         child: Column(
           children: [
             const SizedBox(
               height: 8,
             ),
-            // Container(
-            //   decoration: BoxDecoration,
-            //   height: 150,
-            //   color: Colors.grey,
-            // ),
             CustomCachedImage(
               imageUrl: item.formats!.imageJpeg,
               height: 150,

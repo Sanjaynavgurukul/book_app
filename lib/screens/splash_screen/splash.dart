@@ -33,7 +33,7 @@ class _SplashState extends State<Splash> {
 
   void navigateToLandingScreen(){
     Future.delayed(const Duration(seconds: 3),((){
-      NavigationHelper().normalNavigatePush(context: context, screen: const Landing());
+      NavigationHelper().normalNavigatePushReplacement(context: context, screen: const Landing());
     }));
   }
 }

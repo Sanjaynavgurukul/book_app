@@ -1,4 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <package android:name="com.android.chrome" />
+        <!--        <package android:name="com.instagram.android" />-->
+        <!--        <package android:name="com.facebook.katana" />-->
+    </queries>
+
     <application
         android:label="book_app"
         android:name="${applicationName}"

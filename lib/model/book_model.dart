@@ -51,7 +51,7 @@ class Authors {
 
   factory Authors.fromJson(Map<String, dynamic> json) => Authors(
       birthYear: VariableConverter.convertVariable(variableType: "int", data: json['birth_year']),
-      deathYear: VariableConverter.convertVariable(variableType: "int", data: json['deathYear']),
+      deathYear: VariableConverter.convertVariable(variableType: "int", data: json['death_year']),
       name: VariableConverter.convertVariable(variableType: "String", data: json['name']));
 }
 
